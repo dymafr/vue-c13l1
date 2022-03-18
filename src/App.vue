@@ -1,35 +1,28 @@
 <template>
-  <form @submit="mySubmit">
-    <div>
-      <input v-model="emailValue" type="email" placeholder="Prénom" />
-    </div>
-    <pre>{{ errorMessage }}</pre>
-    <button>Envoi</button>
-  </form>
+  <div class="p-20">
+    <button @click="selectedComponant = 'PageA'" class="btn btn-danger mr-10">
+      Page A
+    </button>
+    <button @click="selectedComponant = 'PageB'" class="btn btn-primary mr-10">
+      Page B
+    </button>
+    <Component :is="composants[selectedComponant]" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { useField, useForm } from 'vee-validate';
-import { z } from 'zod';
-import { toFieldValidator } from '@vee-validate/zod';
+import PageA from './PageA.vue';
+import PageB from './PageB.vue';
+import { ref, type Component as C } from 'vue';
 
-const { handleSubmit } = useForm();
+const composants: { [s:string]: C } = {
+  PageA,
+  PageB,
+};
 
-const mySubmit = handleSubmit(
-  async (values, actions) => {
-    // await fetch au serveur...
-    console.log(values);
-    actions.setFieldError('email', "L'email existe déjà");
-  },
-  (errors) => {
-    console.log(errors);
-  }
-);
-
-const { value: emailValue, errorMessage } = useField(
-  'email',
-  toFieldValidator(z.string().min(5, { message: 'Trop court !' }))
-);
+const selectedComponant = ref('PageA');
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss">
+@import './assets/scss/base.scss';
+</style>
